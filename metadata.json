@@ -1,0 +1,6 @@
+{
+  "name": "Lucid AI Pro",
+  "description": "مُنسّق ومُصمم الأحلام الواضحة الذكي بتقنية النغمات الثنائية (Binaural Beats) وبروتوكول WBTB ومفكرة الأحلام.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

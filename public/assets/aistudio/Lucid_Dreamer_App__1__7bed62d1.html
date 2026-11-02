@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucid AI Control Pro | محفز ومنشئ الأحلام الواضحة الاحترافي</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Tajawal -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Tajawal', 'sans-serif'],
+                    },
+                    colors: {
+                        dream: {
+                            dark: '#070913',
+                            card: '#111428',
+                            accent: '#6366F1',
+                            glow: '#A855F7',
+                            cyan: '#06B6D4',
+                            rose: '#F43F5E'
+                        }
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'spin-slow': 'spin 12s linear infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-12px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #070913;
+            color: #E2E8F0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #070913;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #282E52;
+            border-radius: 3px;
+        }
+
+        .glow-effect {
+            box-shadow: 0 0 30px -5px rgba(168, 85, 247, 0.25);
+        }
+        
+        .active-tab {
+            background: rgba(99, 102, 241, 0.25);
+            border-bottom: 2px solid #A855F7;
+            color: #C084FC;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between overflow-x-hidden font-sans">
+
+    <!-- Background Decorative Glowing Orbs -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="absolute -top-40 -right-40 w-96 h-96 bg-purple-900/20 rounded-full blur-3xl animate-pulse-slow"></div>
+        <div class="absolute top-1/3 -left-40 w-96 h-96 bg-indigo-900/20 rounded-full blur-3xl animate-pulse-slow" style="animation-delay: 2s;"></div>
+        <div class="absolute -bottom-40 right-1/4 w-96 h-96 bg-cyan-900/20 rounded-full blur-3xl animate-pulse-slow" style="animation-delay: 4s;"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="relative z-10 px-5 py-3.5 flex items-center justify-between border-b border-indigo-950/60 bg-dream-dark/80 backdrop-blur-md">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-600 flex items-center justify-center text-white shadow-lg shadow-purple-500/20 animate-pulse-slow">
+                <i class="fa-solid fa-wand-magic-sparkles text-lg"></i>
+            </div>
+            <div>
+                <div class="flex items-center gap-2">
+                    <h1 class="text-lg font-black bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-300 to-cyan-400">Lucid AI Pro</h1>
+                    <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-purple-900/80 text-purple-300 border border-purple-500/30">v2.5</span>
+                </div>
+                <p class="text-[11px] text-slate-400">مُنسّق ومُصمم الأحلام الواضحة الذكي</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-2">
+            <span id="wakeLockStatus" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-medium bg-slate-900/90 text-slate-400 border border-slate-800">
+                <span class="w-2 h-2 rounded-full bg-slate-500" id="statusDot"></span>
+                <span id="statusText">الخلفية متوقفة</span>
+            </span>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="relative z-10 flex-1 max-w-md w-full mx-auto p-4 flex flex-col justify-between">
+
+        <!-- Navigation Tabs -->
+        <div class="grid grid-cols-4 bg-dream-card/80 p-1 rounded-xl backdrop-blur-md mb-5 border border-slate-800/80 text-xs">
+            <button onclick="switchTab('sleep')" id="tab-sleep" class="py-2.5 rounded-lg text-center font-medium transition-all active-tab flex flex-col items-center justify-center gap-1">
+                <i class="fa-solid fa-moon text-sm"></i> <span>النوم</span>
+            </button>
+            <button onclick="switchTab('scenario')" id="tab-scenario" class="py-2.5 rounded-lg text-center font-medium transition-all text-slate-400 hover:text-slate-200 flex flex-col items-center justify-center gap-1">
+                <i class="fa-solid fa-compass text-sm"></i> <span>السيناريو</span>
+            </button>
+            <button onclick="switchTab('signals')" id="tab-signals" class="py-2.5 rounded-lg text-center font-medium transition-all text-slate-400 hover:text-slate-200 flex flex-col items-center justify-center gap-1">
+                <i class="fa-solid fa-satellite-dish text-sm"></i> <span>الإشارات</span>
+            </button>
+            <button onclick="switchTab('audio')" id="tab-audio" class="py-2.5 rounded-lg text-center font-medium transition-all text-slate-400 hover:text-slate-200 flex flex-col items-center justify-center gap-1">
+                <i class="fa-solid fa-sliders text-sm"></i> <span>الموجات</span>
+            </button>
+            <button onclick="switchTab('journal')" id="tab-journal" class="py-2.5 rounded-lg text-center font-medium transition-all text-slate-400 hover:text-slate-200 flex flex-col items-center justify-center gap-1">
+                <i class="fa-solid fa-book-bookmark text-sm"></i> <span>السجل</span>
+            </button>
+        </div>
+
+        <!-- TAB 1: SLEEP MODE (MAIN) -->
+        <div id="view-sleep" class="space-y-5">
+
+            <!-- EEG Visualizer & Timer Box -->
+            <div class="bg-dream-card border border-indigo-900/50 rounded-3xl p-5 text-center relative overflow-hidden shadow-2xl glow-effect">
+                <div id="activePulse" class="hidden absolute inset-0 bg-gradient-to-r from-purple-600/10 via-indigo-600/10 to-cyan-600/10 animate-pulse"></div>
+
+                <!-- EEG Waveform Visualizer Canvas -->
+                <div class="h-16 w-full mb-3 rounded-2xl bg-slate-950/80 border border-indigo-950/80 relative overflow-hidden flex items-center">
+                    <canvas id="eegCanvas"></canvas>
+                    <div class="absolute top-2 right-3 text-[10px] text-purple-400 font-mono flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-purple-500 animate-ping"></span>
+                        <span id="eegStateLabel">EEG SIMULATION: OFF</span>
+                    </div>
+                </div>
+
+                <div class="relative z-10 my-2">
+                    <div id="timerDisplay" class="text-5xl font-black tracking-tight text-white font-mono drop-shadow-md">
+                        04:30:00
+                    </div>
+                    <p id="sessionStateText" class="text-xs text-slate-400 mt-2">وقت الانتظار لولادة مرحلة الـ REM الأولى</p>
+                </div>
+
+                <!-- Circular Progress with REM Indicator -->
+                <div class="flex justify-center my-4">
+                    <div class="relative w-36 h-36 flex items-center justify-center">
+                        <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="42" stroke="currentColor" stroke-width="6" class="text-slate-900" fill="transparent" />
+                            <circle id="progressCircle" cx="50" cy="50" r="42" stroke="currentColor" stroke-width="6" stroke-dasharray="263.89" stroke-dashoffset="0" class="text-purple-500 transition-all duration-1000" stroke-linecap="round" fill="transparent" />
+                        </svg>
+                        <div class="absolute flex flex-col items-center">
+                            <i id="sleepIcon" class="fa-solid fa-bed text-2xl text-purple-400 animate-float"></i>
+                            <span id="cycleCount" class="text-[10px] text-slate-400 mt-1">الدورة 0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Delay Options -->
+                <div class="grid grid-cols-3 gap-2 my-3">
+                    <button onclick="setInitialDelay(3)" class="delay-btn border border-slate-800 bg-slate-900/60 hover:bg-slate-800 text-xs py-2 rounded-xl text-slate-300">3 ساعات</button>
+                    <button onclick="setInitialDelay(4.5)" class="delay-btn border border-indigo-500 bg-indigo-950/70 text-xs py-2 rounded-xl text-indigo-300 font-bold">4.5 ساعة (موصى)</button>
+                    <button onclick="setInitialDelay(6)" class="delay-btn border border-slate-800 bg-slate-900/60 hover:bg-slate-800 text-xs py-2 rounded-xl text-slate-300">6 ساعات</button>
+                </div>
+
+                <!-- Protocol Toggle: WBTB (Wake-Back-To-Bed) -->
+                <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-950/60 border border-slate-800/80 my-3 text-xs">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-bell text-indigo-400"></i>
+                        <span class="text-slate-300 font-medium">نظام WBTB (منبه إيقاظ لطيف)</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input id="wbtbToggle" type="checkbox" class="sr-only peer" checked>
+                        <div class="w-9 h-5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-purple-600"></div>
+                    </label>
+                </div>
+
+                <!-- Start Action -->
+                <div class="mt-4">
+                    <button id="toggleSleepBtn" onclick="toggleSleepMode()" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white font-bold text-base shadow-lg hover:opacity-95 transition active:scale-95 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-play"></i> بدء جلسة النوم
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sleep & Mobile Placement Card -->
+            <div class="bg-dream-card/80 border border-slate-800/80 rounded-2xl p-4 space-y-2">
+                <div class="flex items-center gap-2 text-emerald-400 font-bold text-xs">
+                    <i class="fa-solid fa-shield-halved text-sm"></i>
+                    <span>وضع العمل بالشاشة المغلقة مفعل تلقائياً</span>
+                </div>
+                <p class="text-[11px] text-slate-400 leading-relaxed">
+                    ضع هاتفك على الوسادة بجانب رأسك بعد الضغط على "بدء الجلسة" واغلق الشاشة. سيستمر البرنامج بحساب الأوقات وإرسال الإشارات الصوتية الهادئة فور الوصول لدورات الأحلام.
+                </p>
+            </div>
+        </div>
+
+        <!-- TAB 2: DREAM SCENARIO BUILDER -->
+        <div id="view-scenario" class="space-y-4 hidden">
+            <div class="bg-dream-card border border-slate-800 rounded-2xl p-4 space-y-3">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-sm font-bold text-indigo-300 flex items-center gap-2">
+                        <i class="fa-solid fa-compass"></i> تصميم السيناريوهات والإشارات المخصصة
+                    </h2>
+                    <span id="activeScenarioBadge" class="text-[10px] px-2 py-0.5 rounded-full bg-purple-900/60 border border-purple-500/40 text-purple-300 font-mono">طيران | Gamma Pulse</span>
+                </div>
+                <p class="text-xs text-slate-400 leading-relaxed">
+                    اختر سيناريو الحلم الذي تريد حلمه الليلة. يربط التطبيق تلقائياً بين كل حلم وإشارة صوتية وفريدة لتحفيز الدماغ على تذكره فور الاستماع إليها.
+                </p>
+
+                <!-- Scenario Selection Cards -->
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <button onclick="selectScenario('flight')" id="card-scenario-flight" class="scenario-card p-3 rounded-xl border border-indigo-500/50 bg-indigo-950/40 text-right hover:bg-indigo-900/40 transition">
+                        <div class="font-bold text-indigo-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-plane-departure text-purple-400"></i> حلم الطيران
+                        </div>
+                        <div class="text-[10px] text-slate-400 mt-1">إشارة: Gamma Rising Sweeps (40Hz)</div>
+                    </button>
+                    <button onclick="selectScenario('fantasy')" id="card-scenario-fantasy" class="scenario-card p-3 rounded-xl border border-slate-800 bg-slate-900/40 text-right hover:bg-slate-800 transition">
+                        <div class="font-bold text-cyan-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-tree text-cyan-400"></i> حلم الفانتزي والطبيعة
+                        </div>
+                        <div class="text-[10px] text-slate-400 mt-1">إشارة: Theta Resonance (38Hz)</div>
+                    </button>
+                    <button onclick="selectScenario('space')" id="card-scenario-space" class="scenario-card p-3 rounded-xl border border-slate-800 bg-slate-900/40 text-right hover:bg-slate-800 transition">
+                        <div class="font-bold text-rose-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-shuttle-space text-rose-400"></i> السفر والمجرة
+                        </div>
+                        <div class="text-[10px] text-slate-400 mt-1">إشارة: 3D Alternating Pulse (42Hz)</div>
+                    </button>
+                    <button onclick="selectScenario('custom')" id="card-scenario-custom" class="scenario-card p-3 rounded-xl border border-slate-800 bg-slate-900/40 text-right hover:bg-slate-800 transition">
+                        <div class="font-bold text-emerald-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-gears text-emerald-400"></i> حلم مخصص ورادار
+                        </div>
+                        <div class="text-[10px] text-slate-400 mt-1">إشارة: برمجة تذبذب يدوية</div>
+                    </button>
+                </div>
+
+                <!-- Custom Prompt Field -->
+                <div id="customScenarioBox" class="hidden space-y-2 pt-2 border-t border-slate-800">
+                    <label class="text-[11px] text-slate-400">اكتب سيناريو الحلم الخاص بك بدقة:</label>
+                    <textarea id="customScenarioText" rows="2" placeholder="مثال: أريد دخول حلم في مدينة مستقبلية ولقاء شخصيات محددة..." class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-purple-500"></textarea>
+                    
+                    <div class="grid grid-cols-2 gap-2 text-xs pt-1">
+                        <div>
+                            <label class="text-[10px] text-slate-400">نمط تذبذب الإشارة الصوتية:</label>
+                            <select id="customSignalPattern" class="w-full mt-1 p-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-purple-300">
+                                <option value="rising">Gamma Ascending Pulse (طيران)</option>
+                                <option value="theta_soft">Theta Smooth Waves (استرخاء)</option>
+                                <option value="staccato">Fast Staccato Pulses (سرعة وتفاعل)</option>
+                                <option value="binaural_3d">3D Alternating (ثلاثي الأبعاد)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-400">تردد الوعي المخصص (Hz):</label>
+                            <input id="customFreqHz" type="number" value="40" min="20" max="50" class="w-full mt-1 p-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-cyan-300">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Test Active Scenario Signal -->
+                <button onclick="testScenarioAudioSignal()" class="w-full py-2.5 rounded-xl border border-purple-500/40 bg-purple-950/40 hover:bg-purple-900/50 text-purple-300 text-xs font-bold transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-volume-low"></i> اختبر الإشارة الصوتية الخاصة بهذا الحلم الآن
+                </button>
+
+                <!-- Induction Exercise Button -->
+                <button onclick="startPreSleepIncubation()" class="w-full py-3 rounded-xl bg-gradient-to-r from-purple-700 to-indigo-700 hover:from-purple-600 hover:to-indigo-600 text-white font-bold text-xs transition shadow-md flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-brain"></i> بدء جلسة الاقتران والترسيخ قبل النوم (MILD)
+                </button>
+            </div>
+        </div>
+
+        <!-- NEW TAB: TARGETED SIGNALS ENGINE -->
+        <div id="view-signals" class="space-y-4 hidden">
+            <div class="bg-dream-card border border-slate-800 rounded-2xl p-4 space-y-3">
+                <h2 class="text-sm font-bold text-cyan-300 flex items-center gap-2">
+                    <i class="fa-solid fa-satellite-dish"></i> محرك الإشارات المستهدفة لكل حلم
+                </h2>
+                <p class="text-xs text-slate-400 leading-relaxed">
+                    يعتمد هذا النظام على ربط "بصمة صوتية" فريدة بكل سيناريو حلم. عندما يعزف التطبيق هذه الإشارة أثناء النوم، يتعرف عليها عقلك الباطن فوراً ويستدعي السيناريو المقترن بها.
+                </p>
+
+                <!-- Signal Blueprint Cards -->
+                <div class="space-y-2">
+                    <div class="p-3 bg-slate-950/80 border border-slate-800 rounded-xl flex items-center justify-between">
+                        <div>
+                            <div class="text-xs font-bold text-indigo-300">إشارة حلم الطيران (Flight Signal)</div>
+                            <div class="text-[10px] text-slate-400">تردد متصاعد (40Hz Sweep) يعطي شعور الارتفاع</div>
+                        </div>
+                        <button onclick="playSignalPattern('flight')" class="px-3 py-1.5 bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 text-xs rounded-lg border border-indigo-500/30">سماع الإشارة</button>
+                    </div>
+
+                    <div class="p-3 bg-slate-950/80 border border-slate-800 rounded-xl flex items-center justify-between">
+                        <div>
+                            <div class="text-xs font-bold text-cyan-300">إشارة حلم الفانتزي (Nature Signal)</div>
+                            <div class="text-[10px] text-slate-400">ذبذبات ناعمة (38Hz Waves) استرخاء واستكشاف</div>
+                        </div>
+                        <button onclick="playSignalPattern('fantasy')" class="px-3 py-1.5 bg-cyan-900/60 hover:bg-cyan-800 text-cyan-200 text-xs rounded-lg border border-cyan-500/30">سماع الإشارة</button>
+                    </div>
+
+                    <div class="p-3 bg-slate-950/80 border border-slate-800 rounded-xl flex items-center justify-between">
+                        <div>
+                            <div class="text-xs font-bold text-rose-300">إشارة الفضاء والمغامرات (Space Signal)</div>
+                            <div class="text-[10px] text-slate-400">نبضات ثلاثية الأبعاد متناوبة بين الأذنين (42Hz)</div>
+                        </div>
+                        <button onclick="playSignalPattern('space')" class="px-3 py-1.5 bg-rose-900/60 hover:bg-rose-800 text-rose-200 text-xs rounded-lg border border-rose-500/30">سماع الإشارة</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: AUDIO & BINAURAL SETTINGS -->
+        <div id="view-audio" class="space-y-4 hidden">
+            <div class="bg-dream-card border border-slate-800 rounded-2xl p-4 space-y-4">
+                <h2 class="text-sm font-bold text-indigo-300 flex items-center gap-2">
+                    <i class="fa-solid fa-wave-square"></i> تردد الموجات الصوتية والتحفيز
+                </h2>
+                
+                <!-- Beat Preset Selection -->
+                <div class="space-y-2">
+                    <label class="text-[11px] text-slate-400">نمط النغمة المستهدفة لليلة:</label>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <button onclick="setPreset('gamma')" id="btn-preset-gamma" class="p-2.5 rounded-xl border border-purple-500/60 bg-purple-950/40 text-right">
+                            <div class="font-bold text-purple-300">موجات جاما (40Hz)</div>
+                            <div class="text-[10px] text-slate-400">تحفيز الوعي القشري الإدراكي</div>
+                        </button>
+                        <button onclick="setPreset('theta')" id="btn-preset-theta" class="p-2.5 rounded-xl border border-slate-800 bg-slate-900/40 text-right opacity-70">
+                            <div class="font-bold text-cyan-300">موجات سيتا (6Hz)</div>
+                            <div class="text-[10px] text-slate-400">للاسترخاء والغوص ببطء</div>
+                        </button>
+                        <button onclick="setPreset('alpha')" id="btn-preset-alpha" class="p-2.5 rounded-xl border border-slate-800 bg-slate-900/40 text-right opacity-70">
+                            <div class="font-bold text-emerald-300">موجات ألفا (10Hz)</div>
+                            <div class="text-[10px] text-slate-400">صفاء ذهني وتصفية أفكار</div>
+                        </button>
+                        <button onclick="setPreset('pulsed')" id="btn-preset-pulsed" class="p-2.5 rounded-xl border border-slate-800 bg-slate-900/40 text-right opacity-70">
+                            <div class="font-bold text-rose-300">3D Binaural Pulse</div>
+                            <div class="text-[10px] text-slate-400">نبضات ثلاثية الأبعاد</div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sliders -->
+                <div class="space-y-3 pt-2">
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-slate-300">درجة الصوت (Cue Volume)</span>
+                            <span id="volLabel" class="text-purple-400 font-bold">30%</span>
+                        </div>
+                        <input id="volSlider" type="range" min="5" max="100" value="30" oninput="updateVolume(this.value)" class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-purple-500">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-slate-300">فاصل تكرار الإشارة في الـ REM</span>
+                            <span id="intervalLabel" class="text-cyan-400 font-bold">15 دقيقة</span>
+                        </div>
+                        <input id="intervalSlider" type="range" min="5" max="30" value="15" oninput="updateInterval(this.value)" class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-500">
+                    </div>
+                </div>
+
+                <!-- Test Audio Signal -->
+                <button onclick="testAudioSignal()" class="w-full py-2.5 rounded-xl border border-indigo-500/40 bg-indigo-950/40 hover:bg-indigo-900/50 text-indigo-300 text-xs font-bold transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-volume-high"></i> اختبر الإشارة الصوتية الآن
+                </button>
+            </div>
+
+            <!-- Reality Check Reminders -->
+            <div class="bg-dream-card border border-slate-800 rounded-2xl p-4 space-y-2">
+                <h2 class="text-xs font-bold text-cyan-300 flex items-center gap-2">
+                    <i class="fa-solid fa-fingerprint"></i> اختبار الواقع السريع (Reality Check)
+                </h2>
+                <button onclick="triggerRealityCheckPrompt()" class="w-full py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 text-xs font-medium border border-slate-800">
+                    تنفيذ اختبار واقع سريع
+                </button>
+            </div>
+        </div>
+
+        <!-- TAB 4: ADVANCED DREAM JOURNAL & ANALYTICS -->
+        <div id="view-journal" class="space-y-4 hidden">
+            <!-- Stats Bar -->
+            <div class="grid grid-cols-3 gap-2 text-center text-xs">
+                <div class="bg-dream-card border border-slate-800 p-2.5 rounded-xl">
+                    <div id="statTotal" class="text-lg font-black text-purple-400">0</div>
+                    <div class="text-[10px] text-slate-500">الأحلام المسجلة</div>
+                </div>
+                <div class="bg-dream-card border border-slate-800 p-2.5 rounded-xl">
+                    <div id="statLucid" class="text-lg font-black text-emerald-400">0</div>
+                    <div class="text-[10px] text-slate-500">الأحلام الواضحة</div>
+                </div>
+                <div class="bg-dream-card border border-slate-800 p-2.5 rounded-xl">
+                    <div id="statRate" class="text-lg font-black text-cyan-400">0%</div>
+                    <div class="text-[10px] text-slate-500">معدل النجاح</div>
+                </div>
+            </div>
+
+            <div class="bg-dream-card border border-slate-800 rounded-2xl p-4 space-y-3">
+                <h2 class="text-xs font-bold text-purple-300 flex items-center gap-2">
+                    <i class="fa-solid fa-pen-to-square"></i> توثيق حلم جديد
+                </h2>
+                <input id="dreamTitle" type="text" placeholder="عنوان الحلم..." class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs focus:outline-none focus:border-purple-500">
+                <textarea id="dreamContent" rows="3" placeholder="ماذا رأيت في حلمك؟ هل استطعت التحكم بالطيران أو تغيير الأحداث؟..." class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs focus:outline-none focus:border-purple-500"></textarea>
+                
+                <div class="flex items-center justify-between pt-1">
+                    <label class="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
+                        <input id="wasLucid" type="checkbox" class="w-4 h-4 rounded bg-slate-900 border-slate-700 text-purple-600 focus:ring-purple-500">
+                        <span>كان حلماً واعياً (Lucid Dream) ✨</span>
+                    </label>
+                    <button onclick="saveDream()" class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold rounded-xl transition shadow">
+                        حفظ في السجل
+                    </button>
+                </div>
+            </div>
+
+            <!-- Saved Dreams List -->
+            <div class="space-y-2">
+                <div class="flex items-center justify-between px-1">
+                    <h3 class="text-xs font-bold text-slate-400">الأحلام المسجلة سابقاً</h3>
+                    <button onclick="exportDreams()" class="text-[10px] text-indigo-400 hover:underline">تصدير البيانات</button>
+                </div>
+                <div id="dreamsList" class="space-y-2 max-h-56 overflow-y-auto pr-1">
+                    <!-- Dynamic Entries -->
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- MILD Incubation Modal -->
+    <div id="incubationModal" class="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-dream-card border border-indigo-500/50 rounded-3xl p-6 max-w-sm w-full text-center space-y-4 shadow-2xl">
+            <div class="w-16 h-16 rounded-full bg-indigo-600/20 text-indigo-400 flex items-center justify-center text-3xl mx-auto border border-indigo-500/30 animate-pulse">
+                <i class="fa-solid fa-eye text-2xl"></i>
+            </div>
+            <h3 class="text-lg font-bold text-white">ترسيخ الحلم (Incubation)</h3>
+            <p id="incubationText" class="text-xs text-slate-300 leading-relaxed">
+                خذ نفساً عميقاً، وأغلق عينيك. كرر في سرك 3 مرات: <br>
+                <span class="text-purple-400 font-bold text-sm block my-2">"أنا أعلم أنني أحلم، وسأتحكم بالحلم بالكامل الليلة"</span>
+            </p>
+            <button onclick="closeIncubationModal()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl">
+                تم الترسيخ بنجاح - سأنم الآن 🌙
+            </button>
+        </div>
+    </div>
+
+    <!-- Reality Check Modal -->
+    <div id="realityModal" class="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-dream-card border border-purple-500/50 rounded-3xl p-6 max-w-sm w-full text-center space-y-4 shadow-2xl">
+            <div class="w-16 h-16 rounded-2xl bg-purple-600/20 text-purple-400 flex items-center justify-center text-3xl mx-auto border border-purple-500/30">
+                <i class="fa-solid fa-fingerprint"></i>
+            </div>
+            <h3 class="text-lg font-bold text-white">اختبار الواقع السريع!</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+                انظر إلى يديك الآن أو حاول دفع إبهامك عبر كف يدك الأخرى. <br>
+                <span class="text-purple-400 font-bold block mt-1">هل أنت واعي وفي الواقع أم أنك تحلم؟</span>
+            </p>
+            <button onclick="closeRealityModal()" class="w-full py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs rounded-xl shadow-lg">
+                أنا واعي ومستيقظ تماماً 👍
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer Status -->
+    <footer class="relative z-10 px-5 py-2.5 border-t border-slate-900 bg-dream-dark/95 text-center text-[11px] text-slate-500">
+        Lucid AI Engine &bull; Pure Web Audio API & Signal Synthesis
+    </footer>
+
+    <!-- Logic Engine & Web Audio Audio Synthesis -->
+    <script>
+        // Global Application State
+        let isSessionRunning = false;
+        let initialDelayHours = 4.5;
+        let remainingSeconds = initialDelayHours * 3600;
+        let timerInterval = null;
+        let wakeLock = null;
+        
+        // Audio Synthesis Context
+        let audioCtx = null;
+        let cueVolume = 0.3;
+        let remIntervalMinutes = 15;
+        let selectedPreset = 'gamma'; // gamma, theta, alpha, pulsed
+        let selectedScenario = 'flight'; // flight, fantasy, space, custom
+
+        // Journal & Stats State
+        let dreamsArr = JSON.parse(localStorage.getItem('lucid_dreams_journal_pro') || '[]');
+
+        // EEG Canvas Visualizer
+        let eegCanvas, eegCtx, eegAnimationId;
+        let eegStep = 0;
+
+        window.onload = function() {
+            updateTimerDisplay();
+            renderDreams();
+            initEEGVisualizer();
+            checkWakeLockSupport();
+            selectScenario('flight');
+        };
+
+        // Navigation Tabs Switcher
+        function switchTab(tab) {
+            ['sleep', 'scenario', 'signals', 'audio', 'journal'].forEach(t => {
+                const viewEl = document.getElementById(`view-${t}`);
+                const tabEl = document.getElementById(`tab-${t}`);
+                if (viewEl) viewEl.classList.add('hidden');
+                if (tabEl) {
+                    tabEl.classList.remove('active-tab');
+                    tabEl.classList.add('text-slate-400');
+                }
+            });
+            const activeView = document.getElementById(`view-${tab}`);
+            const activeTab = document.getElementById(`tab-${tab}`);
+            if (activeView) activeView.classList.remove('hidden');
+            if (activeTab) {
+                activeTab.classList.add('active-tab');
+                activeTab.classList.remove('text-slate-400');
+            }
+        }
+
+        // Audio Engine
+        // Audio Engine & Targeted Scenario Signals
+        function initAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playSignalPattern(type) {
+            initAudioContext();
+            const now = audioCtx.currentTime;
+            const duration = 12;
+
+            let baseFreq = 220;
+            let beatFreq = 40;
+
+            if (type === 'flight') {
+                beatFreq = 40;
+                // Ascending pitch sweep for flying sensation
+                playCustomSweepSignal(baseFreq, beatFreq, duration, 'rising');
+            } else if (type === 'fantasy') {
+                beatFreq = 38;
+                playCustomSweepSignal(baseFreq, beatFreq, duration, 'theta_soft');
+            } else if (type === 'space') {
+                beatFreq = 42;
+                playCustomSweepSignal(baseFreq, beatFreq, duration, 'binaural_3d');
+            } else {
+                // Custom
+                const userHz = parseInt(document.getElementById('customFreqHz').value) || 40;
+                const userPattern = document.getElementById('customSignalPattern').value || 'rising';
+                playCustomSweepSignal(baseFreq, userHz, duration, userPattern);
+            }
+        }
+
+        function playCustomSweepSignal(baseFreq, beatFreq, duration, patternType) {
+            const oscLeft = audioCtx.createOscillator();
+            const gainLeft = audioCtx.createGain();
+            const panLeft = audioCtx.createStereoPanner ? audioCtx.createStereoPanner() : null;
+
+            const oscRight = audioCtx.createOscillator();
+            const gainRight = audioCtx.createGain();
+            const panRight = audioCtx.createStereoPanner ? audioCtx.createStereoPanner() : null;
+
+            const now = audioCtx.currentTime;
+
+            oscLeft.frequency.setValueAtTime(baseFreq, now);
+            oscRight.frequency.setValueAtTime(baseFreq + beatFreq, now);
+
+            if (patternType === 'rising') {
+                // Sweep frequency slightly up
+                oscLeft.frequency.linearRampToValueAtTime(baseFreq + 30, now + duration);
+                oscRight.frequency.linearRampToValueAtTime(baseFreq + beatFreq + 30, now + duration);
+            }
+
+            if (panLeft && panRight) {
+                panLeft.pan.value = -1;
+                panRight.pan.value = 1;
+                if (patternType === 'binaural_3d') {
+                    // Pan back and forth
+                    panLeft.pan.setValueAtTime(-1, now);
+                    panLeft.pan.linearRampToValueAtTime(1, now + duration / 2);
+                    panLeft.pan.linearRampToValueAtTime(-1, now + duration);
+
+                    panRight.pan.setValueAtTime(1, now);
+                    panRight.pan.linearRampToValueAtTime(-1, now + duration / 2);
+                    panRight.pan.linearRampToValueAtTime(1, now + duration);
+                }
+            }
+
+            gainLeft.gain.setValueAtTime(0, now);
+            gainLeft.gain.linearRampToValueAtTime(cueVolume, now + 3);
+            gainLeft.gain.linearRampToValueAtTime(0, now + duration);
+
+            gainRight.gain.setValueAtTime(0, now);
+            gainRight.gain.linearRampToValueAtTime(cueVolume, now + 3);
+            gainRight.gain.linearRampToValueAtTime(0, now + duration);
+
+            if (panLeft && panRight) {
+                oscLeft.connect(panLeft).connect(gainLeft).connect(audioCtx.destination);
+                oscRight.connect(panRight).connect(gainRight).connect(audioCtx.destination);
+            } else {
+                oscLeft.connect(gainLeft).connect(audioCtx.destination);
+                oscRight.connect(gainRight).connect(audioCtx.destination);
+            }
+
+            oscLeft.start(now);
+            oscRight.start(now);
+
+            oscLeft.stop(now + duration);
+            oscRight.stop(now + duration);
+        }
+
+        function playBinauralCue() {
+            playSignalPattern(selectedScenario);
+        }
+
+        function testScenarioAudioSignal() {
+            playSignalPattern(selectedScenario);
+        }
+
+        // Scenario Selector
+        function selectScenario(type) {
+            selectedScenario = type;
+            const badge = document.getElementById('activeScenarioBadge');
+
+            ['flight', 'fantasy', 'space', 'custom'].forEach(s => {
+                const card = document.getElementById(`card-scenario-${s}`);
+                if (card) {
+                    if (s === type) {
+                        card.className = "scenario-card p-3 rounded-xl border border-indigo-500/50 bg-indigo-950/40 text-right hover:bg-indigo-900/40 transition";
+                    } else {
+                        card.className = "scenario-card p-3 rounded-xl border border-slate-800 bg-slate-900/40 text-right hover:bg-slate-800 transition";
+                    }
+                }
+            });
+
+            if (type === 'flight') {
+                if (badge) badge.innerText = "طيران | Gamma Rising (40Hz)";
+                document.getElementById('customScenarioBox').classList.add('hidden');
+            } else if (type === 'fantasy') {
+                if (badge) badge.innerText = "فانتزي | Theta Waves (38Hz)";
+                document.getElementById('customScenarioBox').classList.add('hidden');
+            } else if (type === 'space') {
+                if (badge) badge.innerText = "مجرة | 3D Binaural Pulse (42Hz)";
+                document.getElementById('customScenarioBox').classList.add('hidden');
+            } else {
+                if (badge) badge.innerText = "مخصص | Custom Audio Signal";
+                document.getElementById('customScenarioBox').classList.remove('hidden');
+            }
+        }
+
+        function playBinauralCue() {
+            initAudioContext();
+
+            const duration = 14; 
+            const baseFreq = 210;
+            let beatFreq = 40; // Default Gamma
+
+            if (selectedPreset === 'theta') beatFreq = 6;
+            if (selectedPreset === 'alpha') beatFreq = 10;
+            if (selectedPreset === 'pulsed') beatFreq = 15;
+
+            const oscLeft = audioCtx.createOscillator();
+            const gainLeft = audioCtx.createGain();
+            const panLeft = audioCtx.createStereoPanner ? audioCtx.createStereoPanner() : null;
+            
+            oscLeft.frequency.value = baseFreq;
+            if (panLeft) panLeft.pan.value = -1;
+
+            const oscRight = audioCtx.createOscillator();
+            const gainRight = audioCtx.createGain();
+            const panRight = audioCtx.createStereoPanner ? audioCtx.createStereoPanner() : null;
+
+            oscRight.frequency.value = baseFreq + beatFreq;
+            if (panRight) panRight.pan.value = 1;
+
+            const now = audioCtx.currentTime;
+            gainLeft.gain.setValueAtTime(0, now);
+            gainLeft.gain.linearRampToValueAtTime(cueVolume, now + 4);
+            gainLeft.gain.linearRampToValueAtTime(0, now + duration);
+
+            gainRight.gain.setValueAtTime(0, now);
+            gainRight.gain.linearRampToValueAtTime(cueVolume, now + 4);
+            gainRight.gain.linearRampToValueAtTime(0, now + duration);
+
+            if (panLeft && panRight) {
+                oscLeft.connect(panLeft).connect(gainLeft).connect(audioCtx.destination);
+                oscRight.connect(panRight).connect(gainRight).connect(audioCtx.destination);
+            } else {
+                oscLeft.connect(gainLeft).connect(audioCtx.destination);
+                oscRight.connect(gainRight).connect(audioCtx.destination);
+            }
+
+            oscLeft.start(now);
+            oscRight.start(now);
+
+            oscLeft.stop(now + duration);
+            oscRight.stop(now + duration);
+        }
+
+        function testAudioSignal() {
+            playBinauralCue();
+        }
+
+        // Screen WakeLock Handler
+        async function requestWakeLock() {
+            try {
+                if ('wakeLock' in navigator) {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                    document.getElementById('statusDot').className = "w-2 h-2 rounded-full bg-emerald-500 animate-ping";
+                    document.getElementById('statusText').innerText = "الخلفية نشطة";
+                    document.getElementById('statusText').className = "text-emerald-400";
+                }
+            } catch (err) {
+                console.log('WakeLock error:', err.message);
+            }
+        }
+
+        function releaseWakeLock() {
+            if (wakeLock) {
+                wakeLock.release();
+                wakeLock = null;
+            }
+            document.getElementById('statusDot').className = "w-2 h-2 rounded-full bg-slate-500";
+            document.getElementById('statusText').innerText = "الخلفية متوقفة";
+            document.getElementById('statusText').className = "text-slate-400";
+        }
+
+        function checkWakeLockSupport() {
+            if (!('wakeLock' in navigator)) {
+                document.getElementById('statusText').innerText = "WakeLock غير مدعوم بالمتصفح";
+            }
+        }
+
+        // Preset Modulators
+        function setPreset(preset) {
+            selectedPreset = preset;
+            ['gamma', 'theta', 'alpha', 'pulsed'].forEach(p => {
+                const btn = document.getElementById(`btn-preset-${p}`);
+                if (btn) {
+                    if (p === preset) {
+                        btn.classList.remove('border-slate-800', 'opacity-70');
+                        btn.classList.add('border-purple-500/60', 'bg-purple-950/40');
+                    } else {
+                        btn.classList.add('border-slate-800', 'opacity-70');
+                        btn.classList.remove('border-purple-500/60', 'bg-purple-950/40');
+                    }
+                }
+            });
+        }
+
+        function updateVolume(val) {
+            cueVolume = val / 100;
+            document.getElementById('volLabel').innerText = `${val}%`;
+        }
+
+        function updateInterval(val) {
+            remIntervalMinutes = parseInt(val);
+            document.getElementById('intervalLabel').innerText = `${val} دقيقة`;
+        }
+
+        // Scenario Selector
+        function selectScenario(type) {
+            selectedScenario = type;
+            if (type === 'custom') {
+                document.getElementById('customScenarioBox').classList.remove('hidden');
+            } else {
+                document.getElementById('customScenarioBox').classList.add('hidden');
+            }
+        }
+
+        function startPreSleepIncubation() {
+            document.getElementById('incubationModal').classList.remove('hidden');
+        }
+
+        function closeIncubationModal() {
+            document.getElementById('incubationModal').classList.add('hidden');
+        }
+
+        // Reality Check Modal Trigger
+        function triggerRealityCheckPrompt() {
+            document.getElementById('realityModal').classList.remove('hidden');
+        }
+
+        function closeRealityModal() {
+            document.getElementById('realityModal').classList.add('hidden');
+        }
+
+        // Journal Logic & Storage
+        function saveDream() {
+            const title = document.getElementById('dreamTitle').value.trim();
+            const content = document.getElementById('dreamContent').value.trim();
+            const isLucid = document.getElementById('wasLucid').checked;
+
+            if (!content) return;
+
+            const dreamObj = {
+                id: Date.now(),
+                title: title || 'حلم بدون عنوان',
+                content: content,
+                isLucid: isLucid,
+                date: new Date().toLocaleDateString('ar-EG')
+            };
+
+            dreamsArr.unshift(dreamObj);
+            localStorage.setItem('lucid_dreams_journal_pro', JSON.stringify(dreamsArr));
+
+            document.getElementById('dreamTitle').value = '';
+            document.getElementById('dreamContent').value = '';
+            document.getElementById('wasLucid').checked = false;
+
+            renderDreams();
+        }
+
+        function renderDreams() {
+            const container = document.getElementById('dreamsList');
+            const total = dreamsArr.length;
+            const lucidCount = dreamsArr.filter(d => d.isLucid).length;
+            const rate = total > 0 ? Math.round((lucidCount / total) * 100) : 0;
+
+            document.getElementById('statTotal').innerText = total;
+            document.getElementById('statLucid').innerText = lucidCount;
+            document.getElementById('statRate').innerText = `${rate}%`;
+
+            if (total === 0) {
+                container.innerHTML = `<div class="text-xs text-center text-slate-500 py-4">لا توجد أحلام مسجلة حتى الآن</div>`;
+                return;
+            }
+
+            container.innerHTML = dreamsArr.map(d => `
+                <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl space-y-1">
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="font-bold text-slate-200">${d.title}</span>
+                        ${d.isLucid ? '<span class="px-2 py-0.5 rounded-full bg-purple-900/60 border border-purple-500/40 text-purple-300 text-[10px]">حلم واعٍ ✨</span>' : ''}
+                    </div>
+                    <p class="text-xs text-slate-400 line-clamp-2">${d.content}</p>
+                    <div class="text-[10px] text-slate-600 text-left">${d.date}</div>
+                </div>
+            `).join('');
+        }
+
+        function exportDreams() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dreamsArr));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "lucid_dreams_backup.json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+    </script>
+</body>
+</html>
